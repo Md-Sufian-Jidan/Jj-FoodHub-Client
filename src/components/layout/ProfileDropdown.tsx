@@ -25,7 +25,7 @@ export function ProfileDropdown({ user }: { user: any }) {
         ],
         PROVIDER: [
             {
-                href: "/provider-dashboard/create-shop",
+                href: "/provider-dashboard",
                 label: "Provider Dashboard",
                 icon: LayoutDashboardIcon,
             },
@@ -43,7 +43,7 @@ export function ProfileDropdown({ user }: { user: any }) {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer border-2 border-red-600 transition hover:border-red-600">
+                <Avatar className="cursor-pointer border-2 border-[#D97757] transition hover:border-[#D97757">
                     <AvatarImage
                         src={user?.image || "https://github.com/shadcn.png"}
                         alt={user?.name || "User"}

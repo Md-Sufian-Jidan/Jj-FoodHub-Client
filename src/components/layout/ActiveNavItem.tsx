@@ -21,7 +21,7 @@ export default function ActiveItemNav({ items }: { items: any[] }) {
                 return (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild isActive={isActive}>
-                            <Link href={item.url}>{item.title}</Link>
+                            <Link className="hover:bg-black" href={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 );

@@ -280,9 +280,10 @@ export default function AllUsersClient({ users }: AllUsersClientProps) {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Phone className="h-3 w-3 text-muted-foreground" />
-                          {user.phone}
+                          {user.phone || "N/A"}
                         </div>
                       </TableCell>
+
                       <TableCell>
                         <Badge
                           variant="outline"
@@ -291,6 +292,35 @@ export default function AllUsersClient({ users }: AllUsersClientProps) {
                           {user.role}
                         </Badge>
                       </TableCell>
+
+                      {/* Make the user role update api and call here */}
+                      {/* <TableCell>
+                        {user.role === "ADMIN" ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20"
+                          >
+                            Protected
+                          </Badge>
+                        ) : (
+                          <Select
+                            value={user.role}
+                            onValueChange={(value) =>
+                              handleStatusChange(user.id, value)
+                            }
+                            disabled={isUpdating === user.id}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="CUSTOMER">Customer</SelectItem>
+                              <SelectItem value="PROVIDER">Provider</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </TableCell> */}
+
                       <TableCell>
                         <Badge
                           variant="outline"

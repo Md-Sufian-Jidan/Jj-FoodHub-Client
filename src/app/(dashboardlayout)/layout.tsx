@@ -75,7 +75,7 @@ export default async function DashboardLayout({
     const { data } = await userService.getSession();
     return (
         <SidebarProvider>
-            <AppSidebar user={data?.user?.role} />
+            <AppSidebar userRole={data?.user?.role} userName={data?.user?.name} />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
                     <SidebarTrigger className="-ml-1" />
@@ -86,7 +86,7 @@ export default async function DashboardLayout({
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>
-                                <Link href="/">Website</Link>
+                                <Link href="/">MealMate</Link>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem>

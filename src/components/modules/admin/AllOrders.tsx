@@ -231,25 +231,25 @@ export default function AllOrdersClient({ orders }: AllOrdersClientProps) {
 
             {/* Secondary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Card className="bg-yellow-500/5">
+                <Card>
                     <CardContent className="pt-4">
                         <div className="text-xs text-muted-foreground mb-1">Pending</div>
                         <div className="text-xl font-bold">{stats.pending}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-blue-500/5">
+                <Card>
                     <CardContent className="pt-4">
                         <div className="text-xs text-muted-foreground mb-1">Confirmed</div>
                         <div className="text-xl font-bold">{stats.confirmed}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-purple-500/5">
+                <Card>
                     <CardContent className="pt-4">
                         <div className="text-xs text-muted-foreground mb-1">Preparing</div>
                         <div className="text-xl font-bold">{stats.preparing}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-indigo-500/5">
+                <Card>
                     <CardContent className="pt-4">
                         <div className="text-xs text-muted-foreground mb-1">
                             Out for Delivery

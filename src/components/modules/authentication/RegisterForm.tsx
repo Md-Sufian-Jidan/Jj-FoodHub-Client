@@ -1,17 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
+import AppField from "@/components/shared/form/AppField";
+import AppSubmitButton from "@/components/shared/form/AppSubmitButton";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { FieldDescription, FieldGroup } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { defaultValues, RegisterFormSchema } from "@/schema/registerSchema";
+import { defaultValues, RegisterFormSchema } from "@/zod/registerSchema";
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeOff, Lock, Mail, User, UtensilsCrossed } from "lucide-react";
 import Link from "next/link";
@@ -67,16 +62,14 @@ export function RegisterForm({
     return (
         <div
             className={cn(
-                "min-h-[90vh] flex items-center justify-center p-4 md:p-8",
+                "min-h-screen flex items-center justify-center p-4 md:p-8",
                 className
             )}
             {...props}
         >
             <div className="w-full max-w-lg">
-                {/* Decorative elements - Top Left */}
-                <div className="hidden md:block absolute top-10 left-10 w-24 h-24 bg-white rounded-full blur-2xl" />
 
-                <Card className="border border-[#D97757] shadow-[0_15px_60px_rgba(217,119,87,0.08)] bg-[#FAF9F7] rounded-3xl overflow-hidden relative z-10">
+                <Card className="border border-[#D97757] shadow-[0_15px_60px_rgba(217,119,87,0.08)] bg-[#FAF9F7] dark:bg-black dark:border-[#D97757] rounded-3xl overflow-hidden relative z-10">
                     <CardContent className="p-8 md:p-12">
                         {/* Header */}
                         <div className="text-center mb-10">
@@ -87,10 +80,10 @@ export function RegisterForm({
                                     </div>
                                 </div>
                             </Link>
-                            <h1 className="text-3xl md:text-4xl font-bold text-[#1F2933] font-serif tracking-tight">
+                            <h1 className="text-3xl md:text-4xl font-bold text-[#1F2933] dark:text-white font-serif tracking-tight">
                                 {isProviderPage ? "Join as a Provider" : "Get Started"}
                             </h1>
-                            <p className="text-[#6B7280] mt-2 font-sans text-sm md:text-base">
+                            <p className="text-[#6B7280] dark:text-[#fafafa] mt-2 font-sans text-sm md:text-base">
                                 {isProviderPage
                                     ? "Share your meals with thousands of users."
                                     : "Create your free account on MealMate today."}
@@ -107,129 +100,87 @@ export function RegisterForm({
                                 {/* Name Field */}
                                 <form.Field
                                     name="name"
-                                    children={(field) => {
-                                        const isInvalid =
-                                            field.state.meta.isTouched && !field.state.meta.isValid;
-                                        return (
-                                            <Field>
-                                                <FieldLabel
-                                                    htmlFor={field.name}
-                                                    className="text-[#1F2933] font-semibold"
-                                                >
-                                                    Full Name
-                                                </FieldLabel>
-                                                <div className="relative">
-                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B7280]" />
-                                                    <Input
-                                                        type="text"
-                                                        id={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        placeholder="John Doe"
-                                                        onChange={(e) => field.handleChange(e.target.value)}
-                                                        className="pl-10 h-12 rounded-xl bg-white border border-[#FAF9F7] focus-visible:border-[#D97757]/30 focus-visible:ring-[#D97757]/10"
-                                                    />
-                                                </div>
-                                                {isInvalid && (
-                                                    <FieldError errors={field.state.meta.errors} />
-                                                )}
-                                            </Field>
-                                        );
-                                    }}
+                                    children={(field) => (
+                                        <AppField
+                                            field={field as any}
+                                            label="Full Name"
+                                            placeholder="John Doe"
+                                            prepend={<User className="h-4 w-4 text-[#6B7280]" />}
+                                            className="[&_input]:h-12 [&_input]:rounded-xl [&_input]:bg-white [&_input]:border-[#FAF9F7] [&_input]:focus-visible:border-[#D97757]/30 [&_input]:focus-visible:ring-[#D97757]/10 [&_input]:text-[#1F2933] dark:[&_input]:bg-white dark:[&_input]:border-[#FAF9F7] dark:[&_input]:text-[#1F2933] dark:[&_input]:placeholder:text-[#6B7280] [&_label]:text-[#1F2933] dark:[&_label]:text-[#fafafa] [&_label]:font-semibold"
+                                        />
+                                    )}
                                 />
 
                                 {/* Email Field */}
                                 <form.Field
                                     name="email"
-                                    children={(field) => {
-                                        const isInvalid =
-                                            field.state.meta.isTouched && !field.state.meta.isValid;
-                                        return (
-                                            <Field>
-                                                <FieldLabel
-                                                    htmlFor={field.name}
-                                                    className="text-[#1F2933] font-semibold"
-                                                >
-                                                    Email
-                                                </FieldLabel>
-                                                <div className="relative">
-                                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B7280]" />
-                                                    <Input
-                                                        type="email"
-                                                        id={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        placeholder="you@email.com"
-                                                        onChange={(e) => field.handleChange(e.target.value)}
-                                                        className="pl-10 h-12 rounded-xl bg-white border border-[#FAF9F7] focus-visible:border-[#D97757]/30 focus-visible:ring-[#D97757]/10"
-                                                    />
-                                                </div>
-                                                {isInvalid && (
-                                                    <FieldError errors={field.state.meta.errors} />
-                                                )}
-                                            </Field>
-                                        );
-                                    }}
+                                    children={(field) => (
+                                        <AppField
+                                            field={field as any}
+                                            type="email"
+                                            label="Email"
+                                            placeholder="you@email.com"
+                                            prepend={<Mail className="h-4 w-4 text-[#6B7280]" />}
+                                            className="[&_input]:h-12 [&_input]:rounded-xl [&_input]:bg-white [&_input]:border-[#FAF9F7] [&_input]:focus-visible:border-[#D97757]/30 [&_input]:focus-visible:ring-[#D97757]/10 [&_input]:text-[#1F2933] dark:[&_input]:bg-white dark:[&_input]:border-[#FAF9F7] dark:[&_input]:text-[#1F2933] dark:[&_input]:placeholder:text-[#6B7280] [&_label]:text-[#1F2933] dark:[&_label]:text-[#fafafa] [&_label]:font-semibold"
+                                        />
+                                    )}
                                 />
 
                                 {/* Password Field */}
                                 <form.Field
                                     name="password"
-                                    children={(field) => {
-                                        const isInvalid =
-                                            field.state.meta.isTouched && !field.state.meta.isValid;
-                                        return (
-                                            <Field>
-                                                <FieldLabel
-                                                    htmlFor={field.name}
-                                                    className="text-[#1F2933] font-semibold"
-                                                >
-                                                    Password
-                                                </FieldLabel>
-                                                <div className="relative">
-                                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B7280]" />
-                                                    <Input
-                                                        type={showPassword ? "text" : "password"}
-                                                        id={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        placeholder="••••••••"
-                                                        onChange={(e) => field.handleChange(e.target.value)}
-                                                        className="pl-10 pr-10 h-12 rounded-xl bg-white border border-[#FAF9F7] focus-visible:border-[#D97757]/30 focus-visible:ring-[#D97757]/10"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#1F2933]"
-                                                    >
-                                                        {showPassword ? (
-                                                            <EyeOff className="h-4 w-4" />
-                                                        ) : (
-                                                            <Eye className="h-4 w-4" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                                {isInvalid && (
-                                                    <FieldError errors={field.state.meta.errors} />
+                                    children={(field) => (
+                                        <div className="relative">
+                                            <AppField
+                                                field={field}
+                                                label="Password"
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder="Enter your password"
+                                                prepend={
+                                                    <Lock className="w-4 h-4 text-muted-foreground" />
+                                                }
+                                                className="[&_input]:h-12 [&_input]:rounded-xl [&_input]:bg-white [&_input]:border-[#FAF9F7] [&_input]:focus-visible:border-[#D97757]/30 [&_input]:focus-visible:ring-[#D97757]/10 [&_input]:text-[#1F2933] dark:[&_input]:bg-white dark:[&_input]:border-[#FAF9F7] dark:[&_input]:text-[#1F2933] dark:[&_input]:placeholder:text-[#6B7280] [&_label]:text-[#1F2933] dark:[&_label]:text-[#fafafa] [&_label]:font-semibold"
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setShowPassword(!showPassword)
+                                                }
+                                                className="absolute right-3 top-9 text-muted-foreground"
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="w-4 h-4" />
+                                                ) : (
+                                                    <Eye className="w-4 h-4" />
                                                 )}
-                                            </Field>
-                                        );
-                                    }}
+                                            </button>
+                                        </div>
+                                    )}
                                 />
 
                                 {/* Submit Button */}
                                 <div className="pt-2">
-                                    <Button
-                                        type="submit"
-                                        className="w-full h-12 bg-[#D97757] hover:bg-[#D97757]/90 text-white font-bold rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01]"
-                                    >
-                                        {isProviderPage
-                                            ? "Create a Provider Account"
-                                            : "Create My Account"}
-                                    </Button>
+                                    <form.Subscribe
+                                        selector={(state) => state.isSubmitting}
+                                        children={(isSubmitting) => (
+                                            <AppSubmitButton
+                                                isPending={isSubmitting}
+                                                pendingLabel="Creating..."
+                                                className="w-full h-12 bg-[#D97757] hover:bg-[#D97757]/90 text-white font-bold rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01]"
+                                            >
+                                                {isProviderPage
+                                                    ? "Create a Provider Account"
+                                                    : "Create My Account"}
+                                            </AppSubmitButton>
+                                        )}
+                                    />
                                 </div>
 
                                 {/* Provider Call-to-action */}
                                 {!isProviderPage && (
-                                    <div className="text-center p-4 rounded-xl bg-[#D97757]/5 border border-[#D97757]/10">
-                                        <p className="text-sm text-[#1F2933]">
+                                    <div className="text-center p-4 rounded-xl bg-[#D97757]/5 dark:bg-[#D97757]/5 border border-[#D97757]/10 dark:border-[#D97757]/10">
+                                        <p className="text-sm text-[#1F2933] dark:text-[#fafafa]">
                                             Are you a meal provider?{" "}
                                             <Link
                                                 href="/become-provider"
@@ -242,7 +193,7 @@ export function RegisterForm({
                                 )}
 
                                 {/* Login Link */}
-                                <FieldDescription className="text-center text-[#6B7280] pt-2">
+                                <FieldDescription className="text-center text-[#6B7280] dark:text-[#fafafa] pt-2">
                                     Already have an account?{" "}
                                     <Link
                                         href="/login"

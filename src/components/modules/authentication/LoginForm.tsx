@@ -1,84 +1,104 @@
 "use client";
 
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Lock, Mail, UtensilsCrossed, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-    Field,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
-import { motion } from "framer-motion";
-import {
-    Eye,
-    EyeOff,
-    Lock,
-    Mail,
-    UtensilsCrossed,
-    Sun,
-    Moon,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import * as React from "react";
 import { toast } from "sonner";
-import * as z from "zod";
-import { useTheme } from "next-themes";
+import AppSubmitButton from "@/components/shared/form/AppSubmitButton";
+import AppField from "@/components/shared/form/AppField";
+import { LoginFormSchema } from "@/zod/loginSchema";
 
-const LoginFormSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-});
-
-export function LoginForm({ className }: React.ComponentProps<"div">) {
+export function LoginForm({
+    className,
+}: React.ComponentProps<"div">) {
     const [showPassword, setShowPassword] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+
     const router = useRouter();
-    const { theme, setTheme } = useTheme();
 
     const form = useForm({
         defaultValues: {
             email: "",
             password: "",
         },
-        validators: { onSubmit: LoginFormSchema },
+
+        validators: {
+            onSubmit: LoginFormSchema,
+        },
+
         onSubmit: async ({ value }) => {
             setLoading(true);
+
             const toastId = toast.loading("Logging in...");
+
             try {
-                const { error } = await authClient.signIn.email(value);
+                const { error } = await authClient.signIn.email({
+                    email: value.email,
+                    password: value.password,
+                });
+
                 if (error) {
-                    toast.error(error.message, { id: toastId });
+                    toast.error(error.message, {
+                        id: toastId,
+                    });
+
                     return;
                 }
-                toast.success("Welcome back!", { id: toastId });
+
+                toast.success("Welcome back!", {
+                    id: toastId,
+                });
+
                 router.push("/");
             } catch {
-                toast.error("Login failed", { id: toastId });
+                toast.error("Login failed", {
+                    id: toastId,
+                });
             } finally {
                 setLoading(false);
             }
         },
     });
 
-    // ✅ Quick Login Function
-    const quickLogin = async (email: string, password: string) => {
+    const quickLogin = async (
+        email: string,
+        password: string
+    ) => {
         setLoading(true);
+
         const toastId = toast.loading("Quick login...");
+
         try {
-            const { error } = await authClient.signIn.email({ email, password });
+            const { error } = await authClient.signIn.email({
+                email,
+                password,
+            });
+
             if (error) {
-                toast.error(error.message, { id: toastId });
+                console.log(error);
+                toast.error(error.message, {
+                    id: toastId,
+                });
+
                 return;
             }
-            toast.success("Logged in successfully!", { id: toastId });
+
+            toast.success("Logged in successfully!", {
+                id: toastId,
+            });
+
             router.push("/");
         } catch {
-            toast.error("Login failed", { id: toastId });
+            toast.error("Login failed", {
+                id: toastId,
+            });
         } finally {
             setLoading(false);
         }
@@ -87,57 +107,64 @@ export function LoginForm({ className }: React.ComponentProps<"div">) {
     return (
         <div
             className={cn(
-                "min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#FAF9F7] to-white dark:from-[#0F172A] dark:to-[#020617]",
+                "min-h-screen flex items-center justify-center p-4 md:p-8",
                 className
             )}
         >
-            {/* 🌗 Theme Toggle */}
-            <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur-md border border-white/20"
-            >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md"
             >
-                <Card className="rounded-3xl border border-white/20 bg-white/60 dark:bg-white/10 backdrop-blur-xl shadow-xl">
+                <Card className="border border-[#D97757] shadow-[0_15px_60px_rgba(217,119,87,0.08)] bg-[#FAF9F7] dark:bg-black dark:border-[#D97757] rounded-3xl overflow-hidden relative z-10">
                     <CardContent className="p-8">
                         {/* Header */}
                         <div className="text-center mb-8">
                             <div className="w-14 h-14 bg-[#D97757] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                                 <UtensilsCrossed className="text-white" />
                             </div>
+
                             <h1 className="text-2xl font-bold text-[#1F2933] dark:text-white">
                                 Welcome Back
                             </h1>
                         </div>
 
-                        {/* ✅ Quick Login Buttons */}
+                        {/* Quick Login */}
                         <div className="grid grid-cols-3 gap-2 mb-6">
                             <Button
+                                type="button"
                                 variant="outline"
                                 onClick={() =>
-                                    quickLogin("adminfoodie@gmail.com", "Admin@1234")
+                                    quickLogin(
+                                        "adminfoodie@gmail.com",
+                                        "Admin@1234"
+                                    )
                                 }
                             >
                                 Admin
                             </Button>
+
                             <Button
+                                type="button"
                                 variant="outline"
                                 onClick={() =>
-                                    quickLogin("superprovider@gmail.com", "Superprovider@com")
+                                    quickLogin(
+                                        "superprovider@gmail.com",
+                                        "Superprovider@com"
+                                    )
                                 }
                             >
                                 Provider
                             </Button>
+
                             <Button
+                                type="button"
                                 variant="outline"
                                 onClick={() =>
-                                    quickLogin("supercustomer@gmail.com", "Supercustomer@com")
+                                    quickLogin(
+                                        "supercustomer@gmail.com",
+                                        "Supercustomer@com"
+                                    )
                                 }
                             >
                                 User
@@ -148,78 +175,83 @@ export function LoginForm({ className }: React.ComponentProps<"div">) {
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
+                                e.stopPropagation();
                                 form.handleSubmit();
                             }}
+                            className="space-y-5"
                         >
-                            <FieldGroup className="gap-5">
-                                {/* Email */}
-                                <form.Field
-                                    name="email"
-                                    children={(field) => (
-                                        <Field>
-                                            <FieldLabel>Email</FieldLabel>
-                                            <div className="relative">
-                                                <Mail className="absolute left-3 top-3 w-4 h-4" />
-                                                <Input
-                                                    value={field.state.value}
-                                                    onChange={(e) =>
-                                                        field.handleChange(e.target.value)
-                                                    }
-                                                    className="pl-10"
-                                                />
-                                            </div>
-                                            <FieldError errors={field.state.meta.errors} />
-                                        </Field>
-                                    )}
-                                />
+                            {/* Email Field */}
+                            <form.Field
+                                name="email"
+                                children={(field) => (
+                                    <AppField
+                                        field={field}
+                                        label="Email"
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        prepend={
+                                            <Mail className="w-4 h-4 text-muted-foreground" />
+                                        }
+                                        className="[&_input]:h-12 [&_input]:rounded-xl [&_input]:bg-white [&_input]:border-[#FAF9F7] [&_input]:focus-visible:border-[#D97757]/30 [&_input]:focus-visible:ring-[#D97757]/10 [&_input]:text-[#1F2933] dark:[&_input]:bg-white dark:[&_input]:border-[#FAF9F7] dark:[&_input]:text-[#1F2933] dark:[&_input]:placeholder:text-[#6B7280] [&_label]:text-[#1F2933] dark:[&_label]:text-[#fafafa] [&_label]:font-semibold"
+                                    />
+                                )}
+                            />
 
-                                {/* Password */}
-                                <form.Field
-                                    name="password"
-                                    children={(field) => (
-                                        <Field>
-                                            <FieldLabel>Password</FieldLabel>
-                                            <div className="relative">
-                                                <Lock className="absolute left-3 top-3 w-4 h-4" />
-                                                <Input
-                                                    type={showPassword ? "text" : "password"}
-                                                    value={field.state.value}
-                                                    onChange={(e) =>
-                                                        field.handleChange(e.target.value)
-                                                    }
-                                                    className="pl-10 pr-10"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute right-3 top-2"
-                                                >
-                                                    {showPassword ? <EyeOff /> : <Eye />}
-                                                </button>
-                                            </div>
-                                        </Field>
-                                    )}
-                                />
+                            {/* Password Field */}
+                            <form.Field
+                                name="password"
+                                children={(field) => (
+                                    <div className="relative">
+                                        <AppField
+                                            field={field}
+                                            label="Password"
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="Enter your password"
+                                            prepend={
+                                                <Lock className="w-4 h-4 text-muted-foreground" />
+                                            }
+                                            className="[&_input]:h-12 [&_input]:rounded-xl [&_input]:bg-white [&_input]:border-[#FAF9F7] [&_input]:focus-visible:border-[#D97757]/30 [&_input]:focus-visible:ring-[#D97757]/10 [&_input]:text-[#1F2933] dark:[&_input]:bg-white dark:[&_input]:border-[#FAF9F7] dark:[&_input]:text-[#1F2933] dark:[&_input]:placeholder:text-[#6B7280] [&_label]:text-[#1F2933] dark:[&_label]:text-[#fafafa] [&_label]:font-semibold"
+                                        />
 
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="w-full bg-[#D97757] hover:bg-[#c96a4f]"
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setShowPassword(!showPassword)
+                                            }
+                                            className="absolute right-3 top-9 text-muted-foreground"
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff className="w-4 h-4" />
+                                            ) : (
+                                                <Eye className="w-4 h-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                            />
+
+                            {/* Submit Button */}
+                            <AppSubmitButton
+                                isPending={loading}
+                                pendingLabel="Logging in..."
+                                className="w-full h-12 bg-[#D97757] hover:bg-[#D97757]/90 text-white font-bold rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01]"
+                            >
+                                Login
+                            </AppSubmitButton>
+
+                            <p className="text-center text-sm text-muted-foreground">
+                                Don’t have an account?{" "}
+                                <Link
+                                    href="/register"
+                                    className="text-[#D97757] font-medium"
                                 >
-                                    {loading ? "Logging in..." : "Login"}
-                                </Button>
-
-                                <p className="text-center text-sm text-muted-foreground">
-                                    Don’t have an account?{" "}
-                                    <Link href="/register" className="text-[#D97757] font-medium">
-                                        Sign up
-                                    </Link>
-                                </p>
-                            </FieldGroup>
+                                    Sign up
+                                </Link>
+                            </p>
                         </form>
                     </CardContent>
                 </Card>
             </motion.div>
         </div>
     );
-}
+};
